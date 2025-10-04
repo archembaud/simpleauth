@@ -1,0 +1,17 @@
+{
+  "userID": "user123",
+  "userEmail": "test@example.com",
+  "userFirstName": "John",
+  "userLastName": "Doe",
+  "userPassword": "securePassword123",
+  "userPasswordClue": "My favorite color",
+  "clientID": "client456",
+  "userAttributes": {
+    "role": "admin",
+    "department": "engineering",
+    "preferences": {
+      "theme": "dark",
+      "notifications": true
+    }
+  }
+}
