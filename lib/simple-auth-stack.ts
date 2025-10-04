@@ -9,6 +9,12 @@ export class SimpleAuthStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    // Validate that ADMIN_PASSWORD environment variable is set
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      throw new Error('ADMIN_PASSWORD must be defined in the environment');
+    }
+
     // Create DynamoDB table for users
     const usersTable = new dynamodb.Table(this, 'SimpleAuthUsersTable', {
       tableName: 'simple-auth-users',
@@ -23,6 +29,9 @@ export class SimpleAuthStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'hello-world.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambda')),
+      environment: {
+        ADMIN_PASSWORD: adminPassword,
+      },
     });
 
     // Create a Lambda function for users endpoint
@@ -32,6 +41,7 @@ export class SimpleAuthStack extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambda')),
       environment: {
         USERS_TABLE_NAME: usersTable.tableName,
+        ADMIN_PASSWORD: adminPassword,
       },
     });
 
@@ -51,6 +61,7 @@ export class SimpleAuthStack extends cdk.Stack {
     // Create /users endpoint
     const usersResource = api.root.addResource('users');
     usersResource.addMethod('POST', new apigateway.LambdaIntegration(usersFunction));
+    usersResource.addMethod('GET', new apigateway.LambdaIntegration(usersFunction));
 
     // Output the API endpoint URL
     new cdk.CfnOutput(this, 'ApiEndpoint', {

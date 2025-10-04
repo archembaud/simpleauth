@@ -4,9 +4,13 @@ This folder contains test scripts for the Simple Auth API endpoints.
 
 ## Prerequisites
 
-1. Deploy the CDK stack: `cdk deploy`
-2. Get the API Gateway URL from the deployment output
-3. Set the URL environment variable
+1. Set the required environment variable:
+   ```bash
+   export ADMIN_PASSWORD="your-secure-admin-password"
+   ```
+2. Deploy the CDK stack: `cdk deploy`
+3. Get the API Gateway URL from the deployment output
+4. Set the URL environment variable for testing
 
 ## Available Scripts
 
@@ -21,6 +25,34 @@ export URL="https://your-api-gateway-url.amazonaws.com/prod"
 
 # Run the test script
 ./user_creation.sh
+```
+
+### user_list.sh (Linux/macOS/WSL)
+
+Bash script to test the `/users` GET endpoint (admin only).
+
+**Usage:**
+```bash
+# Set the required environment variables
+export URL="https://your-api-gateway-url.amazonaws.com/prod"
+export ADMIN_PASSWORD="your-admin-password"
+
+# Run the test script
+./user_list.sh
+```
+
+### user_list.ps1 (Windows PowerShell)
+
+PowerShell script to test the `/users` GET endpoint (admin only).
+
+**Usage:**
+```powershell
+# Set the required environment variables
+$env:URL = "https://your-api-gateway-url.amazonaws.com/prod"
+$env:ADMIN_PASSWORD = "your-admin-password"
+
+# Run the test script
+.\user_list.ps1
 ```
 ## Test Data
 
@@ -45,18 +77,3 @@ The user creation script uses the following test data:
   }
 }
 ```
-
-## Expected Responses
-
-- **201 Created**: User created successfully
-- **400 Bad Request**: Missing required fields or invalid JSON
-- **405 Method Not Allowed**: Only POST requests are supported
-- **409 Conflict**: User already exists with same userID and clientID
-- **500 Internal Server Error**: Server-side error
-
-## Notes
-
-- The scripts include error handling and formatted output
-- The bash script uses `jq` for JSON formatting if available
-- Both scripts validate that the URL environment variable is set
-- You can modify the test data in the scripts to test different scenarios

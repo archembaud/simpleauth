@@ -6,6 +6,7 @@ A simple authentication API built with AWS CDK, API Gateway, Lambda, and DynamoD
 
 - **Health Check Endpoint**: `GET /healthcheck` - Returns a simple health check response
 - **User Creation Endpoint**: `POST /users` - Creates new users with duplicate checking
+- **User List Endpoint**: `GET /users` - Lists all users (admin authentication required)
 
 ## API Endpoints
 
@@ -33,6 +34,32 @@ Creates a new user in the system. The request body should contain:
 - `409` - User already exists with same userID and clientID
 - `500` - Internal server error
 
+### GET /users
+
+Lists all users in the system (admin only). Requires admin authentication via Authorization header.
+
+**Headers:**
+- `Authorization`: Must match the ADMIN_PASSWORD environment variable
+
+**Response:**
+```json
+{
+  "users": [
+    {
+      "userID": "string",
+      "clientID": "string", 
+      "userEmail": "string"
+    }
+  ],
+  "count": 1
+}
+```
+
+**Response Codes:**
+- `200` - Users retrieved successfully
+- `401` - Unauthorized (invalid or missing admin password)
+- `500` - Internal server error
+
 ## Infrastructure
 
 - **DynamoDB Table**: `simple-auth-users`
@@ -45,11 +72,23 @@ Creates a new user in the system. The request body should contain:
 
 ## Deployment
 
+### Prerequisites
+
+Before deploying, you must set the `ADMIN_PASSWORD` environment variable:
+
+```bash
+export ADMIN_PASSWORD="your-secure-admin-password"
+```
+
+### Deploy Steps
+
 ```bash
 npm install
 npm run build
 cdk deploy
 ```
+
+**Note**: The deployment will fail if `ADMIN_PASSWORD` is not defined in the environment.
 
 ## Development
 
